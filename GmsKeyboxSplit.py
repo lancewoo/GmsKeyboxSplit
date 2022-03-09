@@ -7,6 +7,8 @@
     GmsKeyboxSplit.py gmskeyboxes.xml 2
 将在拆分gmskeyboxes.xml文件时写完第二个设备密钥文件后停止继续执行。
 
+如果第二个参数填0或不填，将解析完成整个文件。
+
 author: WU Liang
 """
 
@@ -14,12 +16,30 @@ import xml.etree.ElementTree as ET
 import copy
 import sys
 
+
+def usage():
+    info = """
+    解析谷歌提供的GMS密钥文件，并将其拆分，按IMEI逐个保存文件。
+
+    运行时命令行第一个参数是待拆解密钥文件名，第二个参数是标记调试停留的文件次序，
+    例如：
+        GmsKeyboxSplit.py gmskeyboxes.xml 2
+    将在拆分gmskeyboxes.xml文件时写完第二个设备密钥文件后停止继续执行。
+
+    如果第二个参数填0或不填，将解析完成整个文件。
+
+    Author: WU Liang
+    ----------------------------------------------------------------------------------------------------
+    作者: 吴亮
+    """
+    print(info)
+
 if sys.version_info < (3,7,6):
     sys.stderr.write("You need Python 3.7.6 or later to run this script\n")
     sys.exit(1)
 
 # 标记调试停留的文件次序，不做调试时可将其设置为0
-DEBUG_STOP = 0 if len(sys.argv) != 2 else int(sys.argv[2] - 1)
+DEBUG_STOP = 0
 
 def main(keyboxesxml):
     tree = ET.parse(keyboxesxml)
@@ -93,8 +113,10 @@ def main(keyboxesxml):
     print('==================================>>>>')
 
 if __name__ == '__main__':
-    # print(sys.argv)
+    print('命令行参数:', sys.argv)
+    # print('命令行参数个数：', len(sys.argv))
+    DEBUG_STOP = 0 if len(sys.argv) <= 2 else int(sys.argv[2]) - 1
     if len(sys.argv) == 1:
-        main('2020-08-12_06-30-21.255_UTC.attest_keyboxes.xml')
+        usage()
     else:
         main(sys.argv[1])
